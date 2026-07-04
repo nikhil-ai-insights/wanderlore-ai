@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
-import { auth, db } from './firebase';
+import { auth, db, OperationType, handleFirestoreError } from './firebase';
 import { TravelMode, SavedGuide } from './types';
 
 // Importing Custom UI components
@@ -302,7 +302,10 @@ export default function App() {
 
       setSavedGuides(guides);
       localStorage.setItem(`guides_${uid}`, JSON.stringify(guides));
-    } catch (err) {
+    } catch (err: any) {
+      if (err && (err.code === 'permission-denied' || String(err.message || '').includes('permission-denied') || String(err.message || '').includes('permissions'))) {
+        handleFirestoreError(err, OperationType.LIST, 'savedGuides');
+      }
       console.warn("Firestore lookup failed or blocked. Using local storage mode.", err);
     }
   };
@@ -349,7 +352,10 @@ export default function App() {
       localStorage.setItem(`guides_${user.uid}`, JSON.stringify(updatedList));
       setIsCurrentResultSaved(true);
       setActiveGuideId(docRef.id);
-    } catch (err) {
+    } catch (err: any) {
+      if (err && (err.code === 'permission-denied' || String(err.message || '').includes('permission-denied') || String(err.message || '').includes('permissions'))) {
+        handleFirestoreError(err, OperationType.CREATE, 'savedGuides');
+      }
       console.error("Failed to save to Firestore. Attempting local storage-only save.", err);
       // Fallback local save
       const mockId = 'local_' + Date.now();
@@ -370,7 +376,10 @@ export default function App() {
       if (!id.startsWith('local_')) {
         await deleteDoc(doc(db, 'savedGuides', id));
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err && (err.code === 'permission-denied' || String(err.message || '').includes('permission-denied') || String(err.message || '').includes('permissions'))) {
+        handleFirestoreError(err, OperationType.DELETE, `savedGuides/${id}`);
+      }
       console.error("Firestore deletion failed", err);
     }
 

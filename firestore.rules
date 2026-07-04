@@ -1,10 +1,61 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Global Safety Net (Default-deny catch-all)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidSavedGuide(data) {
+      return data.userId is string 
+          && data.userId.size() <= 128
+          && data.userId == request.auth.uid
+          && data.mode is string 
+          && (data.mode == 'explorer' || data.mode == 'heritage' || data.mode == 'connect' || data.mode == 'organizer')
+          && data.title is string 
+          && data.title.size() <= 300
+          && data.subtitle is string 
+          && data.subtitle.size() <= 1000
+          && data.createdAt is string 
+          && data.createdAt.size() <= 100;
+    }
+
     // Secure access to user's saved guides
     match /savedGuides/{guideId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Create rules
+      allow create: if isSignedIn() 
+                    && isValidId(guideId) 
+                    && isValidSavedGuide(request.resource.data);
+
+      // Read rules (including get and list)
+      allow get: if isSignedIn() && isOwner(resource.data.userId);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      // Update rules (not actively used but secure if attempted)
+      allow update: if isSignedIn() 
+                    && isValidId(guideId) 
+                    && isOwner(resource.data.userId) 
+                    && isValidSavedGuide(request.resource.data)
+                    && request.resource.data.userId == resource.data.userId;
+
+      // Delete rules
+      allow delete: if isSignedIn() 
+                    && isValidId(guideId) 
+                    && isOwner(resource.data.userId);
     }
   }
 }

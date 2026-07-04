@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { db, auth } from '../firebase';
-import { collection, query, where, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { TravelMode, SavedGuide, TravelStyle } from '../types';
 import { 
   Compass, BookOpen, Users, BarChart3, Plus, Settings, User, LogOut, Trash2, Calendar, 

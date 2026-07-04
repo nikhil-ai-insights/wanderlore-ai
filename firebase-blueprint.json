@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "SavedGuide": {
+      "title": "SavedGuide",
+      "description": "A saved AI travel guide containing itinerary or cultural insight results",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The authenticated user ID of the guide creator"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["explorer", "heritage", "connect", "organizer"],
+          "description": "Travel mode selected"
+        },
+        "title": {
+          "type": "string",
+          "description": "High-level name of the guide"
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Contextual subtitle or tagline of the guide"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The ISO string representing when the guide was created"
+        }
+      },
+      "required": ["userId", "mode", "title", "subtitle", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/savedGuides/{guideId}": {
+      "schema": "SavedGuide",
+      "description": "Collection of saved travel guides created by users"
+    }
+  }
+}
