@@ -163,3 +163,41 @@ export interface SavedGuide {
   connectResult?: ConnectResult;
   organizerResult?: OrganizerResult;
 }
+
+export interface ExplorerInputs {
+  destination: string;
+  travelDates?: string;
+  duration: number;
+  interests: string[];
+  travelStyle: TravelStyle;
+  budgetRange: string;
+  mobilityNeeds: string;
+  languagePreference: string;
+}
+
+export interface HeritageInputs {
+  landmarkName: string;
+  regionCountry: string;
+  historicalEra: string;
+  narrativeTone: string;
+  languagePreference?: string;
+}
+
+export interface ConnectInputs {
+  location: string;
+  travelDates?: string;
+  interests: string[];
+  groupSize: number;
+  preferredExperience: string;
+}
+
+export interface OrganizerInputs {
+  region: string;
+  targetPersona: string;
+  season: string;
+  culturalTheme: string;
+  promotionGoal: string;
+}
+
+export type GeneratorInputs = ExplorerInputs | HeritageInputs | ConnectInputs | OrganizerInputs;
+

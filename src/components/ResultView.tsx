@@ -10,7 +10,7 @@ import ReactMarkdown from 'react-markdown';
 
 interface ResultViewProps {
   mode: TravelMode;
-  result: any;
+  result: ExplorerResult | HeritageResult | ConnectResult | OrganizerResult;
   onBack: () => void;
   onSave?: () => Promise<void>;
   isSaved?: boolean;
@@ -22,6 +22,11 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
   const [activeStoryReveal, setActiveStoryReveal] = useState(false);
   const [audioSpeed, setAudioSpeed] = useState('1x');
   const [isAudioReading, setIsAudioReading] = useState(false);
+
+  const explorer = result as ExplorerResult;
+  const heritage = result as HeritageResult;
+  const connect = result as ConnectResult;
+  const organizer = result as OrganizerResult;
 
   if (!result) {
     return (
@@ -202,20 +207,20 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </div>
             <span className="font-mono text-xs text-terracotta uppercase tracking-widest block mb-2">CULTURAL ARCHIVE</span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-gradient mb-3">
-              {result.destination}
+              {explorer.destination}
             </h1>
             <p className="font-sans text-lg text-warm-sand/90 font-light italic mb-6">
-              "{result.tagline}"
+              "{explorer.tagline}"
             </p>
             <p className="text-warm-sand text-sm font-light leading-relaxed max-w-3xl">
-              {result.overview}
+              {explorer.overview}
             </p>
 
             {/* Score Indicators Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-warm-sand/10">
               <div className="flex gap-3 items-center">
                 <div className="w-12 h-12 rounded-full border border-terracotta/20 flex items-center justify-center font-mono text-base font-bold text-terracotta bg-earth-bg">
-                  {result.authenticityScore}
+                  {explorer.authenticityScore}
                 </div>
                 <div>
                   <h4 className="font-display text-xs font-semibold">Authenticity Score</h4>
@@ -225,7 +230,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
 
               <div className="flex gap-3 items-center">
                 <div className="w-12 h-12 rounded-full border border-heritage-teal/20 flex items-center justify-center font-mono text-base font-bold text-heritage-teal bg-earth-bg">
-                  {result.hiddenGemScore}
+                  {explorer.hiddenGemScore}
                 </div>
                 <div>
                   <h4 className="font-display text-xs font-semibold">Hidden Gem Score</h4>
@@ -237,7 +242,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <Clock className="w-4 h-4 text-terracotta shrink-0" />
                 <div>
                   <span className="block font-mono text-[10px] text-warm-sand/40">BEST TIME TO VISIT</span>
-                  <span className="font-semibold text-xs text-warm-cream">{result.bestTimeToVisit}</span>
+                  <span className="font-semibold text-xs text-warm-cream">{explorer.bestTimeToVisit}</span>
                 </div>
               </div>
             </div>
@@ -251,7 +256,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               The Spirit of the Locale
             </h3>
             <p className={`text-warm-sand text-sm font-light leading-relaxed transition-all duration-700 ${activeStoryReveal ? '' : 'line-clamp-3'}`}>
-              {result.narrativeSnapshot}
+              {explorer.narrativeSnapshot}
             </p>
             <button
               onClick={() => setActiveStoryReveal(!activeStoryReveal)}
@@ -272,7 +277,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <h3 className="font-display text-lg font-bold">Iconic Cultural Attractions</h3>
               </div>
               <div className="space-y-6">
-                {result.iconicAttractions.map((item: any, i: number) => (
+                {explorer.iconicAttractions.map((item, i) => (
                   <div key={i} className="group">
                     <h4 className="font-display font-semibold text-sm text-terracotta group-hover:underline cursor-pointer">{item.name}</h4>
                     <p className="text-warm-sand text-xs font-light mt-1.5 leading-relaxed">{item.description}</p>
@@ -296,7 +301,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <h3 className="font-display text-lg font-bold text-gradient">Hidden Gems & Folklore Secrets</h3>
               </div>
               <div className="space-y-6">
-                {result.hiddenGems.map((item: any, i: number) => (
+                {explorer.hiddenGems.map((item, i) => (
                   <div key={i} className="p-4 rounded-2xl bg-earth-bg/50 border border-warm-sand/5 hover:border-terracotta/30 transition-all">
                     <h4 className="font-display font-semibold text-sm text-warm-cream flex justify-between">
                       <span>{item.name}</span>
@@ -360,7 +365,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </h3>
             
             <div className="space-y-8">
-              {result.suggestedItinerary.map((day: any, i: number) => (
+              {explorer.suggestedItinerary.map((day, i) => (
                 <div key={i} className="relative pl-6 sm:pl-8 border-l-2 border-heritage-teal/30 group">
                   {/* Glowing Node indicator */}
                   <div className="absolute -left-2.5 top-1 w-4 h-4 rounded-full bg-earth-bg border-2 border-heritage-teal flex items-center justify-center">
@@ -371,7 +376,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                   <h4 className="font-display text-xl font-bold mb-4">{day.title}</h4>
                   
                   <div className="space-y-4">
-                    {day.activities.map((act: any, idx: number) => (
+                    {day.activities.map((act, idx) => (
                       <div key={idx} className="p-4 rounded-xl bg-earth-card/40 border border-warm-sand/5 hover:border-heritage-teal/20 transition-all">
                         <div className="flex flex-wrap justify-between items-baseline mb-1">
                           <span className="font-mono text-xs text-heritage-teal font-semibold">{act.time}</span>
@@ -399,7 +404,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               <h3 className="font-display text-lg font-bold">Traditional Gastronomy & Dishes</h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {result.culinaryHighlights.map((dish: any, i: number) => (
+              {explorer.culinaryHighlights.map((dish, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-earth-bg/50 border border-warm-sand/5">
                   <h4 className="font-display font-semibold text-sm text-terracotta">{dish.dishName}</h4>
                   <p className="text-warm-sand text-xs font-light mt-1.5 leading-relaxed">{dish.description}</p>
@@ -421,7 +426,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <span>Events Happening</span>
               </h4>
               <div className="space-y-4">
-                {result.localEvents && result.localEvents.map((evt: any, i: number) => (
+                {explorer.localEvents && explorer.localEvents.map((evt, i) => (
                   <div key={i} className="p-3 rounded-xl bg-earth-bg/50 border border-warm-sand/5">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-mono text-[9px] text-terracotta">{evt.date}</span>
@@ -441,7 +446,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <span>Local Customs</span>
               </h4>
               <ul className="space-y-3">
-                {result.culturalEtiquette.map((et: string, i: number) => (
+                {explorer.culturalEtiquette.map((et: string, i: number) => (
                   <li key={i} className="text-xs text-warm-sand font-light leading-relaxed flex gap-2">
                     <span className="text-terracotta shrink-0">▪</span>
                     <span>{et}</span>
@@ -457,7 +462,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
                 <span>Travel Budget Plan</span>
               </h4>
               <div className="space-y-3 font-mono text-xs text-warm-sand">
-                {result.budgetBreakdown.map((b: any, i: number) => (
+                {explorer.budgetBreakdown.map((b, i) => (
                   <div key={i} className="p-2.5 rounded-xl bg-earth-bg/50 border border-warm-sand/5 flex flex-col justify-between">
                     <div className="flex justify-between font-semibold">
                       <span className="text-warm-cream">{b.category}</span>
@@ -477,7 +482,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               <div>
                 <h5 className="font-display font-bold text-amber-200 mb-1">Safety & Travel Advisory</h5>
                 <ul className="list-disc pl-4 space-y-1 text-amber-200/80 font-light">
-                  {result.safetyAdvisory.map((sa: string, i: number) => <li key={i}>{sa}</li>)}
+                  {explorer.safetyAdvisory.map((sa: string, i: number) => <li key={i}>{sa}</li>)}
                 </ul>
               </div>
             </div>
@@ -487,7 +492,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               <div>
                 <h5 className="font-display font-bold text-emerald-200 mb-1">Sustainability & Responsible Travel</h5>
                 <ul className="list-disc pl-4 space-y-1 text-emerald-200/80 font-light">
-                  {result.sustainabilityTips.map((st: string, i: number) => <li key={i}>{st}</li>)}
+                  {explorer.sustainabilityTips.map((st: string, i: number) => <li key={i}>{st}</li>)}
                 </ul>
               </div>
             </div>
@@ -505,20 +510,20 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </div>
             <span className="font-mono text-xs text-heritage-teal uppercase tracking-widest block mb-2">EPIC RECORD</span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-gradient mb-3">
-              {result.landmarkName}
+              {heritage.landmarkName}
             </h1>
             <p className="font-sans text-lg text-warm-sand/90 font-light italic mb-6">
-              {result.regionCountry} • Historical Era: <span className="font-semibold text-warm-cream">{result.historicalEra}</span>
+              {heritage.regionCountry} • Historical Era: <span className="font-semibold text-warm-cream">{heritage.historicalEra}</span>
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-warm-sand/10">
               <div>
                 <h4 className="font-display font-semibold text-xs text-terracotta uppercase tracking-wider mb-2">Historical Background</h4>
-                <p className="text-xs text-warm-sand font-light leading-relaxed">{result.historicalBackground}</p>
+                <p className="text-xs text-warm-sand font-light leading-relaxed">{heritage.historicalBackground}</p>
               </div>
               <div>
                 <h4 className="font-display font-semibold text-xs text-heritage-teal uppercase tracking-wider mb-2">Cultural Significance</h4>
-                <p className="text-xs text-warm-sand font-light leading-relaxed">{result.culturalSignificance}</p>
+                <p className="text-xs text-warm-sand font-light leading-relaxed">{heritage.culturalSignificance}</p>
               </div>
             </div>
           </div>
@@ -532,13 +537,13 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             
             {/* Render atmospheric paragraphs nicely */}
             <div className="text-warm-sand text-sm font-light leading-relaxed space-y-4">
-              {result.immersiveStory.split('\n\n').map((p: string, idx: number) => (
+              {heritage.immersiveStory.split('\n\n').map((p, idx) => (
                 <p key={idx}>{p}</p>
               ))}
             </div>
 
             {/* Legends Myths sidebar inside card */}
-            {result.legendsMythsFolklore && result.legendsMythsFolklore.map((myth: any, i: number) => (
+            {heritage.legendsMythsFolklore && heritage.legendsMythsFolklore.map((myth, i) => (
               <div key={i} className="mt-8 p-6 rounded-2xl bg-earth-bg/50 border border-terracotta/10 relative">
                 <div className="absolute top-4 right-4 text-xs font-mono text-terracotta/40">FOLKLORE</div>
                 <h4 className="font-display font-semibold text-base text-terracotta mb-2">{myth.title}</h4>
@@ -585,13 +590,13 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               <div className="flex items-end gap-1 justify-center h-8 mb-6 animate-pulse">
                 {Array.from({ length: 24 }).map((_, i) => (
                   <div 
-                    key={i} 
-                    className="w-1 bg-terracotta rounded-full" 
-                    style={{ 
-                      height: `${Math.floor(Math.random() * 24) + 4}px`,
-                      animationDelay: `${i * 0.05}s`,
-                      animationDuration: '0.8s'
-                    }} 
+                     key={i} 
+                     className="w-1 bg-terracotta rounded-full" 
+                     style={{ 
+                       height: `${Math.floor(Math.random() * 24) + 4}px`,
+                       animationDelay: `${i * 0.05}s`,
+                       animationDuration: '0.8s'
+                     }} 
                   />
                 ))}
               </div>
@@ -599,7 +604,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
 
             <div className="p-5 rounded-2xl bg-earth-bg/60 border border-warm-sand/5 font-mono text-xs text-warm-sand leading-relaxed relative">
               <div className="absolute top-2 right-3 font-mono text-[8px] text-warm-sand/30">AUDIO SCRIPT</div>
-              {result.audioGuideScript}
+              {heritage.audioGuideScript}
             </div>
           </div>
 
@@ -608,7 +613,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             <div className="p-6 sm:p-8 rounded-3xl glass-panel">
               <h4 className="font-display font-bold text-sm text-gradient mb-4 uppercase tracking-wider">Architectural & Artistic Details</h4>
               <ul className="space-y-3">
-                {result.architecturalHighlights.map((hl: string, i: number) => (
+                {heritage.architecturalHighlights.map((hl: string, i: number) => (
                   <li key={i} className="text-xs text-warm-sand font-light leading-relaxed flex gap-2">
                     <span className="text-heritage-teal shrink-0">✦</span>
                     <span>{hl}</span>
@@ -620,7 +625,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             <div className="p-6 sm:p-8 rounded-3xl glass-panel">
               <h4 className="font-display font-bold text-sm text-gradient mb-4 uppercase tracking-wider">Did You Know? (Trivia)</h4>
               <ul className="space-y-3">
-                {result.funFacts.map((fact: string, i: number) => (
+                {heritage.funFacts.map((fact: string, i: number) => (
                   <li key={i} className="text-xs text-warm-sand font-light leading-relaxed flex gap-2">
                     <span className="text-terracotta shrink-0">▪</span>
                     <span>{fact}</span>
@@ -636,12 +641,12 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
               <div>
                 <span className="font-mono text-[9px] text-terracotta uppercase tracking-widest block mb-1">CONSERVATION & PRESERVATION</span>
                 <h4 className="font-display font-semibold text-sm mb-2">Heritage Site Integrity</h4>
-                <p className="text-xs text-warm-sand font-light leading-relaxed">{result.preservationStatus}</p>
+                <p className="text-xs text-warm-sand font-light leading-relaxed">{heritage.preservationStatus}</p>
               </div>
 
               <div className="border-t sm:border-t-0 sm:border-l border-warm-sand/10 pt-4 sm:pt-0 pl-0 sm:pl-6 space-y-3">
                 <span className="font-mono text-[9px] text-heritage-teal uppercase tracking-widest block mb-1">Nearby Related Heritage Locations</span>
-                {result.nearbyHeritageSites && result.nearbyHeritageSites.map((site: any, i: number) => (
+                {heritage.nearbyHeritageSites && heritage.nearbyHeritageSites.map((site, i) => (
                   <div key={i} className="text-xs">
                     <div className="flex justify-between text-warm-cream">
                       <span className="font-semibold">{site.name}</span>
@@ -666,7 +671,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </div>
             <span className="font-mono text-xs text-terracotta uppercase tracking-widest block mb-2">ARTISAN CO-OP</span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-gradient mb-3">
-              {result.location}
+              {connect.location}
             </h1>
             <p className="text-warm-sand text-sm font-light leading-relaxed max-w-3xl">
               Connect directly with multigenerational craft cooperatives, family hosts, and indigenous culinary masters. Bypass commercialized agencies.
@@ -675,11 +680,11 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             <div className="flex gap-6 mt-6 pt-6 border-t border-warm-sand/10 font-mono text-xs text-warm-sand">
               <div className="flex gap-2 items-center">
                 <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
-                <span>Community Impact: {result.communityImpactScore}/100</span>
+                <span>Community Impact: {connect.communityImpactScore}/100</span>
               </div>
               <div className="flex gap-2 items-center">
                 <span className="w-2.5 h-2.5 rounded-full bg-heritage-teal" />
-                <span>Uniqueness Factor: {result.uniquenessScore}/100</span>
+                <span>Uniqueness Factor: {connect.uniquenessScore}/100</span>
               </div>
             </div>
           </div>
@@ -692,7 +697,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {result.eventsCalendar && result.eventsCalendar.map((evt: any, i: number) => (
+              {connect.eventsCalendar && connect.eventsCalendar.map((evt, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-earth-bg/50 border border-warm-sand/5 hover:border-terracotta/30 transition-all">
                   <div className="flex justify-between items-baseline mb-2">
                     <span className="font-mono text-[10px] text-terracotta uppercase tracking-wider">{evt.date}</span>
@@ -713,7 +718,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </h3>
 
             <div className="space-y-6">
-              {result.localArtisans && result.localArtisans.map((artisan: any, i: number) => (
+              {connect.localArtisans && connect.localArtisans.map((artisan, i) => (
                 <div key={i} className="p-4 rounded-xl bg-earth-bg/50 border border-warm-sand/5 flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <h4 className="font-display font-semibold text-sm text-terracotta">{artisan.name}</h4>
@@ -738,7 +743,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {result.communityExperiences && result.communityExperiences.map((exp: any, i: number) => (
+              {connect.communityExperiences && connect.communityExperiences.map((exp, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-earth-bg/40 border border-warm-sand/5">
                   <h4 className="font-display font-semibold text-sm text-warm-cream">{exp.title}</h4>
                   <p className="text-[10px] font-mono text-terracotta uppercase tracking-wider mb-2">HOSTED BY {exp.host}</p>
@@ -764,15 +769,15 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </div>
             <span className="font-mono text-xs text-heritage-teal uppercase tracking-widest block mb-2">SAAS METRICS</span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-gradient mb-3">
-              {result.region} Campaign
+              {organizer.region} Campaign
             </h1>
             <p className="text-warm-sand text-sm font-light leading-relaxed max-w-3xl">
-              Strategic campaign outlines designed to appeal directly to <span className="font-semibold text-terracotta">{result.targetPersona}</span>.
+              Strategic campaign outlines designed to appeal directly to <span className="font-semibold text-terracotta">{organizer.targetPersona}</span>.
             </p>
 
             <div className="mt-6 pt-6 border-t border-warm-sand/10 flex gap-4 font-mono text-xs text-warm-sand">
               <span className="px-3 py-1 bg-terracotta/10 text-terracotta rounded-full border border-terracotta/10">
-                Audience Appeal: {result.audienceAppealScore}/100
+                Audience Appeal: {organizer.audienceAppealScore}/100
               </span>
             </div>
           </div>
@@ -784,7 +789,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             </h3>
 
             <div className="space-y-6">
-              {result.positioningIdeas && result.positioningIdeas.map((idea: any, i: number) => (
+              {organizer.positioningIdeas && organizer.positioningIdeas.map((idea, i) => (
                 <div key={i} className="p-5 rounded-2xl bg-earth-bg/50 border border-warm-sand/5">
                   <h4 className="font-display font-semibold text-base text-terracotta">"{idea.slogan}"</h4>
                   <span className="font-mono text-[9px] text-heritage-teal uppercase tracking-widest">ANGLE: {idea.angle}</span>
@@ -799,7 +804,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             <div className="p-6 sm:p-8 rounded-3xl border border-terracotta/15 bg-earth-card/40">
               <h3 className="font-display text-lg font-bold mb-6">Suggested Campaign Themes</h3>
               <div className="space-y-6">
-                {result.campaignThemes && result.campaignThemes.map((camp: any, i: number) => (
+                {organizer.campaignThemes && organizer.campaignThemes.map((camp, i) => (
                   <div key={i}>
                     <h4 className="font-display font-semibold text-sm text-terracotta">{camp.title}</h4>
                     <p className="text-xs text-warm-sand font-light mt-1 leading-relaxed">{camp.concept}</p>
@@ -816,7 +821,7 @@ export default function ResultView({ mode, result, onBack, onSave, isSaved = fal
             <div className="p-6 sm:p-8 rounded-3xl border border-heritage-teal/15 bg-earth-card/40">
               <h3 className="font-display text-lg font-bold mb-6">Strategic Storytelling Angles</h3>
               <div className="space-y-6">
-                {result.storytellingContentAngles && result.storytellingContentAngles.map((angle: any, i: number) => (
+                {organizer.storytellingContentAngles && organizer.storytellingContentAngles.map((angle, i) => (
                   <div key={i} className="p-4 rounded-xl bg-earth-bg/30 border border-warm-sand/5">
                     <h4 className="font-display font-semibold text-sm text-warm-cream">"{angle.hook}"</h4>
                     <span className="font-mono text-[9px] text-heritage-teal uppercase tracking-widest">FORMAT: {angle.suggestedFormat}</span>

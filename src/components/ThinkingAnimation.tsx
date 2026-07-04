@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Compass, Sparkles, Check } from 'lucide-react';
 
@@ -8,6 +8,11 @@ interface ThinkingAnimationProps {
 
 export default function ThinkingAnimation({ onComplete }: ThinkingAnimationProps) {
   const [currentStage, setCurrentStage] = useState(0);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const stages = [
     "Understanding Your Travel Style...",
@@ -37,13 +42,13 @@ export default function ThinkingAnimation({ onComplete }: ThinkingAnimationProps
   useEffect(() => {
     if (currentStage === stages.length - 1) {
       const timer = setTimeout(() => {
-        if (onComplete) {
-          onComplete();
+        if (onCompleteRef.current) {
+          onCompleteRef.current();
         }
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [currentStage, stages.length, onComplete]);
+  }, [currentStage, stages.length]);
 
   const percentage = Math.round(((currentStage + 1) / stages.length) * 100);
 

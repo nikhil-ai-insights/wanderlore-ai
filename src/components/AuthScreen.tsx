@@ -60,27 +60,44 @@ export default function AuthScreen({ onBack, onSuccess }: AuthScreenProps) {
     }
   };
 
+  const validateEmail = (emailStr: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(emailStr);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
     setLoading(true);
 
+    const cleanEmail = email.trim();
+    const cleanPassword = password;
+
     try {
+      if (!validateEmail(cleanEmail)) {
+        throw new Error('Please enter a valid email address.');
+      }
+
+      if (mode !== 'forgot' && cleanPassword.length < 6) {
+        throw new Error('Password must be at least 6 characters.');
+      }
+
       if (mode === 'login') {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
         onSuccess();
       } else if (mode === 'signup') {
-        if (!name.trim()) {
+        const cleanName = name.trim().replace(/<[^>]*>/g, ''); // strip any potential HTML script tags
+        if (!cleanName) {
           throw new Error('Please enter your full name.');
         }
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const userCred = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
         await updateProfile(userCred.user, {
-          displayName: name
+          displayName: cleanName
         });
         onSuccess();
       } else if (mode === 'forgot') {
-        await sendPasswordResetEmail(auth, email);
+        await sendPasswordResetEmail(auth, cleanEmail);
         setSuccessMsg('A password reset link has been sent to your email.');
         setTimeout(() => setMode('login'), 4000);
       }

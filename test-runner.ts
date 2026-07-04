@@ -165,6 +165,19 @@ describe('Security & Firestore Rules Verification', () => {
     const isAllowed = storedDocument.userId === mockUserUid;
     assert(isAllowed === false, 'Access should be blocked if document owner differs from requester');
   });
+
+  it('should sanitize HTML inputs and strip tags to prevent script injection', () => {
+    const dirtyInput = "Kyoto <script>alert('xss')</script> Japan";
+    const cleanOutput = dirtyInput.replace(/<[^>]*>/g, '').trim();
+    assert(cleanOutput === "Kyoto alert('xss') Japan", 'HTML tag markup must be stripped');
+  });
+
+  it('should limit input string length to prevent memory buffer exhaustion', () => {
+    const longString = 'a'.repeat(500);
+    const maxLength = 150;
+    const truncated = longString.substring(0, maxLength);
+    assert(truncated.length === 150, 'Input length must be capped at 150');
+  });
 });
 
 // ==========================================

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { TravelMode, TravelStyle } from '../types';
+import { TravelMode, TravelStyle, GeneratorInputs } from '../types';
 import { Compass, BookOpen, Users, BarChart3, HelpCircle, AlertCircle, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 
 interface GeneratorFormProps {
   initialMode: TravelMode;
   onBack: () => void;
-  onSubmit: (mode: TravelMode, inputs: any) => void;
+  onSubmit: (mode: TravelMode, inputs: GeneratorInputs) => void;
 }
 
 export default function GeneratorForm({ initialMode, onBack, onSubmit }: GeneratorFormProps) {
@@ -78,7 +78,7 @@ export default function GeneratorForm({ initialMode, onBack, onSubmit }: Generat
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    let payload = {};
+    let payload: GeneratorInputs | null = null;
 
     if (mode === 'explorer') {
       if (!destination.trim()) return;
@@ -121,7 +121,9 @@ export default function GeneratorForm({ initialMode, onBack, onSubmit }: Generat
       };
     }
 
-    onSubmit(mode, payload);
+    if (payload) {
+      onSubmit(mode, payload);
+    }
   };
 
   return (
