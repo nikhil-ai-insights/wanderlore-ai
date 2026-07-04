@@ -1,0 +1,6 @@
+{
+  "name": "Wanderlore AI",
+  "description": "Discover Places. Live Their Stories. Immersive GenAI-powered travel companion that uncovers hidden gems, folklore, cultural heritage, and local events.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
